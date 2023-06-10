@@ -1,0 +1,78 @@
+:root{
+    --bg-color:#1f242d;
+    --second-bg-color:#323946;
+    --text-color:#fff;
+    --main-color:#0ef;
+  
+  }
+
+.menu {
+    background-color: #1a1a1a;
+    padding: 10px;
+    border-radius: 1em;
+    margin: 4.5em;
+  }
+  
+  .menu-list {
+    display: flex;
+    justify-content: center;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+  .menu li{
+    margin: 0.7em;
+    font-size: 1em;
+    padding: 0.5em 1em;
+    background-color: var(--bg-color);
+    border-radius: 3em;
+    cursor: pointer;
+    transition: 0.3s;
+    font-weight: bold;
+  }
+  
+  .menu-item {
+    margin: 0 10px;
+    padding: 10px;
+    color: #fff;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+  .menu .inactive{
+    background-color: var(--bg-color);
+    color:var(--text-color);
+  }
+  
+  .menu .active{
+    background-color: var(--bg-color);
+    color:var(--main-color);
+  }
+  
+  
+  .menu .active:hover{
+    background:var(--main-color);
+    color:var(--text-color);
+  }
+  
+  .menu .inactive:hover{
+    background:var(--main-color);
+    color:var(--text-color);
+    
+  } 
+  .menu-item:hover {
+    background-color: #333;
+  }
+  
+  @media (max-width: 990px) {
+    .menu-list {
+      flex-wrap: wrap;
+    }
+  
+    
+    .menu-item {
+      margin: 5px;
+    }
+  }
+  
