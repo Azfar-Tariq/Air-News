@@ -1,40 +1,66 @@
 import React, { useState, useEffect } from "react";
 import Menu from "./components/Menu";
 import NewsGrid from "./components/NewsGrid";
-
 import "./Main.css";
 
 function Main() {
-
-
-  //this UuseState() hook will fetch data from the API
   const [items, setItems] = useState([]);
-
-  //this UseState() hook will contain IDs of menu links which user will click on
   const [active, setActive] = useState(1);
-
-  //this UeState() hook will contain Category of news. It will be 'general category' in the beginning
   const [category, setCategory] = useState("general");
+  const [page, setPage] = useState(1);
+  const [loading, setLoading] = useState(false);
+  const [hasMore, setHasMore] = useState(true);
+
+  const fetchNews = async () => {
+    if (loading || !hasMore) return;
+    setLoading(true);
+    try {
+      const response = await fetch(
+        `https://gnews.io/api/v4/top-headlines?category=${category}&lang=en&country=us&page=${page}&max=10&apikey=0bdadb3c68aceddbabac6675b97815c7`
+      );
+      const data = await response.json();
+      if (data.articles.length === 0) {
+        setHasMore(false);
+      } else {
+        setItems(prevItems => [...prevItems, ...data.articles]);
+        setPage(prevPage => prevPage + 1);
+      }
+    } catch (error) {
+      console.error('Error fetching news:', error);
+    }
+    setLoading(false);
+  };
 
   useEffect(() => {
-    // fetch(`https://gnews.io/api/v4/top-headlines?country=pk&category=${category}&apikey=0bdadb3c68aceddbabac6675b97815c7`)
-    fetch(
-      `https://newsapi.org/v2/top-headlines?country=us&category=${category}&apiKey=ab416ca98b044518a736c854739fc555`
-    )
-      //converting from .JSON to Object form
-      .then((res) => res.json())
-      //then adding the data to our items
-      .then((data) => setItems(data.articles));
+    setItems([]);
+    setPage(1);
+    setHasMore(true);
+    fetchNews();
   }, [category]);
 
-  return (
-       <div className="App">
-        <h1 className="title">See the Latest News on</h1>
-        <h1 className="title"> Air News</h1>
-        <Menu active={active} setActive={setActive} setCategory={setCategory} />
+  useEffect(() => {
+    const handleScroll = () => {
+      if (
+        window.innerHeight + document.documentElement.scrollTop >=
+        document.documentElement.offsetHeight - 100
+      ) {
+        fetchNews();
+      }
+    };
 
-        <NewsGrid items={items} />
-      </div>
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, [loading, hasMore]);
+
+  return (
+    <div className="App">
+      <h1 className="title">See the Latest News on</h1>
+      <h1 className="title"> Air News</h1>
+      <Menu active={active} setActive={setActive} setCategory={setCategory} />
+      <NewsGrid items={items} />
+      {loading && <p>Loading more news...</p>}
+      {!hasMore && <p>No more news to load.</p>}
+    </div>
   );
 }
 
